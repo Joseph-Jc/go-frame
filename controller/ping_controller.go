@@ -2,13 +2,13 @@ package controller
 
 import (
 	"github.com/gin-gonic/gin"
+	"go-frame/utils"
 	"net/http"
-	"stock/utils"
 )
 
 type PingController struct {
 }
 
-func (t *PingController) Ping(context *gin.Context) {
+func (t PingController) Ping(context *gin.Context) {
 	context.JSON(http.StatusOK, utils.Response.Return(0, "pong!!!!"))
 }

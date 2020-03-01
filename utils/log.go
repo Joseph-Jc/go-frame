@@ -13,6 +13,7 @@ var Log *Logger
 type Logger struct {
 	fileDate string
 	file     *os.File
+	pool     *Pool
 	trace    *log.Logger
 	info     *log.Logger
 	warning  *log.Logger
@@ -26,12 +27,15 @@ func InitLog() *os.File {
 	logger := Logger{
 		fileDate: splitDate,
 		file:     file,
+		pool:     NewPool(4),
 		trace:    log.New(io.MultiWriter(file, os.Stderr), "[TRACE] ", logFormat),
 		info:     log.New(io.MultiWriter(file, os.Stderr), "[INFO] ", logFormat),
 		warning:  log.New(io.MultiWriter(file, os.Stderr), "[WARNING] ", logFormat),
 		error:    log.New(io.MultiWriter(file, os.Stderr), "[ERROR] ", logFormat),
 	}
+	go logger.pool.Run()
 	Log = &logger
+
 	return Log.file
 }
 
@@ -78,21 +82,29 @@ func (l *Logger) checkSplitFile() {
 }
 
 func (l *Logger) Trace(log ...interface{}) {
-	l.checkSplitFile()
-	l.trace.Println(log...)
+	l.pool.EntryChannel <- NewTask(func() {
+		l.checkSplitFile()
+		l.trace.Println(log...)
+	})
 }
 
 func (l *Logger) Info(log ...interface{}) {
-	l.checkSplitFile()
-	l.info.Println(log...)
+	l.pool.EntryChannel <- NewTask(func() {
+		l.checkSplitFile()
+		l.info.Println(log...)
+	})
 }
 
 func (l *Logger) Warning(log ...interface{}) {
-	l.checkSplitFile()
-	l.warning.Println(log...)
+	l.pool.EntryChannel <- NewTask(func() {
+		l.checkSplitFile()
+		l.warning.Println(log...)
+	})
 }
 
 func (l *Logger) Error(log ...interface{}) {
-	l.checkSplitFile()
-	l.error.Println(log...)
+	l.pool.EntryChannel <- NewTask(func() {
+		l.checkSplitFile()
+		l.error.Println(log...)
+	})
 }

@@ -1,6 +1,6 @@
 package cron
 
-import "stock/gframe"
+import "go-frame/gframe"
 
 type Route struct {
 }

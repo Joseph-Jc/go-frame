@@ -2,13 +2,13 @@ package main
 
 import (
 	"fmt"
+	"go-frame/conf"
+	"go-frame/cron"
+	"go-frame/gframe"
+	"go-frame/model"
+	"go-frame/routes"
+	"go-frame/utils"
 	"os"
-	"stock/conf"
-	"stock/cron"
-	"stock/gframe"
-	"stock/model"
-	"stock/routes"
-	"stock/utils"
 )
 
 func main() {

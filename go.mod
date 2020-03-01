@@ -1,4 +1,4 @@
-module stock
+module go-frame
 
 go 1.13
 
